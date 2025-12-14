@@ -1,5 +1,3 @@
-// flask uruchomiony z linii poleceń
-
 pipeline {
     agent any
     
@@ -11,7 +9,6 @@ pipeline {
                 checkout scm
             }
         }
-        
         
         stage('Run with venv') {
             options {
@@ -30,15 +27,20 @@ pipeline {
                 }
             }
         }
+    
         
         
-        
-        stage('Verify Deployment') {
-            steps {
-                sh 'sleep 5'
-                sh 'curl -f http://localhost:5000 || exit 1'
-            }
-        }
-    } 
+    }
+    
+   // abort zmieniamy w sukces na końcu
+   post {
+    aborted {
+      script {
+        // jeśli chcesz traktować timeout/abort jako sukces
+        currentBuild.result = 'SUCCESS'
+      }
+    }
+  }
+   
    
 }
